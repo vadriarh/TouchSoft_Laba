@@ -1,17 +1,20 @@
 package app.main;
 
-import java.io.*;
+import app.interfaces.Connection;
+import app.interfaces.Converter;
+import app.entities.JsonConverter;
+import app.entities.Message;
+import app.entities.SocketConnection;
+import app.thread.ThreadOfInnerMessages;
+import app.utils.MessageUtils;
+
+import java.io.IOException;
 import java.net.Socket;
 
 
 public class APPChat {
-    private String name;
-    private String nameKey;
-    private String recipient;
-    private boolean isRegistered;
-    private boolean isleave;
-
     private Socket socket;
+    private Converter converter;
     private boolean isExited;
     private Thread threadApp;
     private Connection connection;
@@ -28,11 +31,10 @@ public class APPChat {
 
     private boolean initSocket() {
         boolean status = false;
-        name="unknown";
-        recipient="server";
+        converter=new JsonConverter();
         try {
             socket = new Socket("127.0.0.1", 40404);
-            connection = new SocketStringConnection(socket);
+            connection = new SocketConnection(socket,converter);
             status = true;
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -49,13 +51,12 @@ public class APPChat {
 
     private void startChat() {
         System.out.println("Console Chat v1.0");
-        String command = null;
         while (!isExited) {
-            command = MessageUtils.getConsoleMessage();
-            if(command.equals("/exit")){
+            String command = MessageUtils.getConsoleMessage();
+            if(command.equals("/exit")||socket.isClosed()){
                 isExited=true;
             }
-            sendMessage(command);
+            connection.sendMessage(new Message(command));
         }
     }
 
@@ -64,57 +65,16 @@ public class APPChat {
         try {
             connection.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         System.out.println("Chat stoped");
     }
 
-    void setIsleave(boolean isleave) {
-        this.isleave = isleave;
-    }
-
-
-    void setNameKey(String nameKey) {
-        this.nameKey = nameKey;
-    }
-
-    void setRegistered(boolean registered) {
-        isRegistered = registered;
-    }
-
-    String getRecipient() {
-        return recipient;
-    }
-
-    void setRecipient(String recipient) {
-        this.recipient = recipient;
-    }
-
-    private void sendMessage(String message) {
-        if(isRegistered){
-            if(message.equals("/leave")){
-                message="leave#@"+recipient+"#@"+nameKey;
-            }else if(message.equals("/exit")){
-                message="exit#@"+recipient+"#@"+nameKey;
-            }else if(isleave){
-                message="send#@"+recipient+"#@"+message;
-            }else{
-                System.out.println("Wait to connection");
-                return;
-            }
-        }
-        connection.sendMessage(message);
-    }
-
-    void setName(String name) {
-        this.name = name;
-    }
-
-    Connection getConnection() {
+    public Connection getConnection() {
         return connection;
     }
 
-    boolean isExited() {
+    public boolean isExited() {
         return isExited;
     }
 

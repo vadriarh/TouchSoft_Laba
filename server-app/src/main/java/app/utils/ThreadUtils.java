@@ -2,12 +2,12 @@ package app.utils;
 
 import app.main.Server;
 import app.threads.ThreadOfInnerReports;
-import app.threads.ThreadOfRegistration;
+import app.threads.ThreadOfCreateChats;
 import app.threads.ThreadOfServer;
 
 public class ThreadUtils {
     private static Thread threadOfServer;
-    private static Thread threadOfRegistration;
+    private static Thread threadOfCreateChats;
     private static Thread threadOfInnerReports;
 
 
@@ -33,22 +33,22 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean startThreadOfRegistration(){
-        if(threadOfRegistration==null){
-            threadOfRegistration = new Thread(new ThreadOfRegistration());
-            threadOfRegistration.setDaemon(true);
-            threadOfRegistration.setName("Registration thread");
-            threadOfRegistration.start();
+    public static boolean startThreadOfCreateChats(){
+        if(threadOfCreateChats ==null){
+            threadOfCreateChats = new Thread(new ThreadOfCreateChats());
+            threadOfCreateChats.setDaemon(true);
+            threadOfCreateChats.setName("Registration thread");
+            threadOfCreateChats.start();
             return true;
         }
         System.out.println("Error to start registration thread");
         return false;
     }
 
-    public static boolean stopThreadOfRegistration(){
-        if(threadOfRegistration.isAlive()){
-            threadOfRegistration.interrupt();
-            threadOfRegistration=null;
+    public static boolean stopThreadOfCreateChats(){
+        if(threadOfCreateChats.isAlive()){
+            threadOfCreateChats.interrupt();
+            threadOfCreateChats =null;
             return true;
         }
         System.out.println("Registration process not run");
@@ -78,6 +78,6 @@ public class ThreadUtils {
     }
 
     public static boolean isIsThreadsAlive() {
-        return threadOfInnerReports.isAlive()&&threadOfServer.isAlive()&&threadOfRegistration.isAlive();
+        return threadOfInnerReports.isAlive()&&threadOfServer.isAlive()&& threadOfCreateChats.isAlive();
     }
 }

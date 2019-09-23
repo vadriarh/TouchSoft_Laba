@@ -1,10 +1,12 @@
 package app.main;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import app.interfaces.Converter;
+import app.entities.JsonConverter;
 import app.storage.SocketStorage;
 import app.utils.MessageUtils;
 import app.utils.ThreadUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -18,6 +20,7 @@ public class Server {
     private boolean isAlive;
     private final int DEFAULT_SERVER_PORT = 40404;
     private int serverPort;
+    public static final Converter CONVERTER=new JsonConverter();
 
     private void init(String command) {
         if (!isAlive) {
@@ -68,7 +71,7 @@ public class Server {
             isAlive = false;
             ThreadUtils.stopThreadOfServer();
             ThreadUtils.stopThreadOfInnerReports();
-            ThreadUtils.stopThreadOfRegistration();
+            ThreadUtils.stopThreadOfCreateChats();
             SocketStorage.close();
             try {
                 serverSocket.close();
@@ -111,7 +114,7 @@ public class Server {
             init(command);
         } else if (command.equals("/start")) {
             startServer();
-        } else if (command.equals("/stop")) {
+        }  else if (command.equals("/stop")) {
             stopServer();
         } else if (command.equals("/exit")) {
             exit();
@@ -133,6 +136,8 @@ public class Server {
             wrongCommand();
         }
     }
+
+
 
     public ServerSocket getServerSocket() {
         return serverSocket;

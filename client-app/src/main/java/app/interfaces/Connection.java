@@ -1,4 +1,4 @@
-package app.main;
+package app.interfaces;
 
 import java.io.Closeable;
 

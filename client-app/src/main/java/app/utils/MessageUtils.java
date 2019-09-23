@@ -1,16 +1,10 @@
 package app.utils;
 
-import app.handler.MessageHandler;
-import app.interfaces.Connection;
-import app.entities.Message;
-import app.entities.User;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MessageUtils {
-
     public static String getConsoleMessage() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String message = null;
@@ -21,13 +15,4 @@ public class MessageUtils {
         }
         return message;
     }
-
-    public static void handleMessageFromUserConnection(User user){
-        Connection connection=user.getConnection();
-        Message message = (Message) connection.getMessage();
-        if(message.getText()!=null){
-            MessageHandler.service(user, message);
-        }
-    }
-
 }

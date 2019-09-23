@@ -1,10 +1,13 @@
 package app.threads;
 
 import app.main.Server;
+import app.entities.Message;
+import app.entities.User;
+import app.storage.SocketStorage;
+import app.utils.MessageConstant;
+import app.utils.ThreadUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import app.storage.SocketStorage;
-import app.utils.ThreadUtils;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -18,7 +21,7 @@ public class ThreadOfServer implements Runnable {
     }
     @Override
     public void run() {
-        ThreadUtils.startThreadOfRegistration();
+        ThreadUtils.startThreadOfCreateChats();
         ThreadUtils.startThreadOfInnerReports();
         while (!ThreadUtils.isIsThreadsAlive()){
 
@@ -29,12 +32,14 @@ public class ThreadOfServer implements Runnable {
             incomingSocket = null;
             try {
                 incomingSocket = server.getServerSocket().accept();
-                LOGGER.info("Get inner connection");
+                LOGGER.info("Get inner connection"+incomingSocket);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
             if (server.isAlive()) {
-                SocketStorage.addConnection(incomingSocket);
+                User newUser=new User(incomingSocket);
+                newUser.getConnection().sendMessage(new Message(MessageConstant.INVITATION_TO_REGISTER));
+                SocketStorage.addUser(newUser);
             }
         }
     }

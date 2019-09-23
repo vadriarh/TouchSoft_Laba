@@ -1,9 +1,9 @@
-package app.model;
+package app.interfaces;
 
 import java.io.Closeable;
 
 public interface Connection<MessageType> extends Closeable {
     void sendMessage(MessageType message);
     MessageType getMessage();
-    String getReport();
+    boolean isActive();
 }
