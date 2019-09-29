@@ -7,13 +7,19 @@ import app.storage.SocketStorage;
 
 public class SendUtils {
     public static void sendMessage(User user, Message message){
+        SocketStorage storage=SocketStorage.getInstance();
         Connection<Message> userConnection=user.getConnection();
-
-        Message sendMessage=new Message(user.getName()+": "+message.getText());
-        userConnection.sendMessage(sendMessage);
-
-        User recipient= SocketStorage.getUserFromMap(user.getRecipient());
+        String userName=user.getName();
+        String recipientNameKey=user.getRecipient();
+        String getTextFromMessage=message.getText();
+        User recipient= storage.getUserFromMap(recipientNameKey);
         Connection<Message> recipientConnection=recipient.getConnection();
+
+        String answerServer=userName+": "+getTextFromMessage;
+
+        Message sendMessage=new Message(answerServer);
+
+        userConnection.sendMessage(sendMessage);
         recipientConnection.sendMessage(sendMessage);
     }
 

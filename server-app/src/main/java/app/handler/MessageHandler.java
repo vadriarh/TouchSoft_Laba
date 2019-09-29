@@ -12,14 +12,15 @@ public class MessageHandler {
     private static Logger LOGGER = LogManager.getLogger(MessageHandler.class);
     public static void service(User user, Message message){
         Connection<Message> userConnection=user.getConnection();
-        String text=message.getText();
-        if(text.startsWith("/")){
-            if(text.equals("/leave")){
+        String textFromMessage=message.getText();
+
+        if(textFromMessage.startsWith("/")){
+            if(textFromMessage.equals("/leave")){
                 LeaveUtils.leaveUser(user);
-            }else if(text.equals("/exit")){
+            }else if(textFromMessage.equals("/exit")){
                 ExitUtils.exitUser(user);
-            }else if(text.startsWith("/reg ")) {
-                RegisterUtils.register(user,text);
+            }else if(textFromMessage.startsWith("/reg ")) {
+                RegisterUtils.register(user,textFromMessage);
             }else{
                 userConnection.sendMessage(new Message(WRONG_COMMAND));
             }

@@ -2,7 +2,6 @@ package app.entities;
 
 
 import app.interfaces.Connection;
-import app.main.Server;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -17,18 +16,10 @@ public class User implements Closeable {
 
 
     public User(Socket socket) {
-        this.connection = new SocketConnection(socket, Server.CONVERTER);
+        this.connection = new SocketConnection(socket);
     }
 
-
-    public User(User user) {
-        this.name = user.getName();
-        this.userType = user.getUserType();
-        this.recipient = user.getRecipient();
-        this.connection = user.getConnection();
-    }
-
-    public String getRecipient() {
+    public String getRecipient() { //return string {userType#userName}
         return recipient;
     }
 

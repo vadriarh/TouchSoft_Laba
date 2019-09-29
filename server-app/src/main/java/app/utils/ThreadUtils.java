@@ -1,8 +1,7 @@
 package app.utils;
 
-import app.main.Server;
-import app.threads.ThreadOfInnerReports;
 import app.threads.ThreadOfCreateChats;
+import app.threads.ThreadOfInnerReports;
 import app.threads.ThreadOfServer;
 
 public class ThreadUtils {
@@ -11,9 +10,9 @@ public class ThreadUtils {
     private static Thread threadOfInnerReports;
 
 
-    public static boolean startThreadServer(Server server){
+    private static boolean startThreadServer(){
         if(threadOfServer==null){
-            threadOfServer = new Thread(new ThreadOfServer(server));
+            threadOfServer = new Thread(new ThreadOfServer());
             threadOfServer.setDaemon(true);
             threadOfServer.setName("Server thread");
             threadOfServer.start();
@@ -23,7 +22,7 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean stopThreadOfServer(){
+    private static boolean stopThreadOfServer(){
         if(threadOfServer.isAlive()){
             threadOfServer.interrupt();
             threadOfServer=null;
@@ -33,7 +32,7 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean startThreadOfCreateChats(){
+    private static boolean startThreadOfCreateChats(){
         if(threadOfCreateChats ==null){
             threadOfCreateChats = new Thread(new ThreadOfCreateChats());
             threadOfCreateChats.setDaemon(true);
@@ -45,7 +44,7 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean stopThreadOfCreateChats(){
+    private static boolean stopThreadOfCreateChats(){
         if(threadOfCreateChats.isAlive()){
             threadOfCreateChats.interrupt();
             threadOfCreateChats =null;
@@ -55,7 +54,7 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean startThreadOfInnerReports(){
+    private static boolean startThreadOfInnerReports(){
         if(threadOfInnerReports==null){
             threadOfInnerReports = new Thread(new ThreadOfInnerReports());
             threadOfInnerReports.setDaemon(true);
@@ -67,7 +66,7 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean stopThreadOfInnerReports(){
+    private static boolean stopThreadOfInnerReports(){
         if(threadOfInnerReports.isAlive()){
             threadOfInnerReports.interrupt();
             threadOfInnerReports=null;
@@ -77,7 +76,15 @@ public class ThreadUtils {
         return false;
     }
 
-    public static boolean isIsThreadsAlive() {
-        return threadOfInnerReports.isAlive()&&threadOfServer.isAlive()&& threadOfCreateChats.isAlive();
+    public static void startThreads(){
+        ThreadUtils.startThreadServer();
+        ThreadUtils.startThreadOfCreateChats();
+        ThreadUtils.startThreadOfInnerReports();
+    }
+
+    public static void stopThreads(){
+        ThreadUtils.stopThreadOfServer();
+        ThreadUtils.stopThreadOfInnerReports();
+        ThreadUtils.stopThreadOfCreateChats();
     }
 }

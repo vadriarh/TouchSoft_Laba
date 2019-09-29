@@ -2,6 +2,7 @@ package app.entities;
 
 import app.interfaces.Connection;
 import app.interfaces.Converter;
+import app.utils.ServerProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,15 +11,17 @@ import java.net.Socket;
 import java.util.Objects;
 
 public class SocketConnection implements Connection<Message> {
+    private ServerProperty property;
     private Socket socket;
     private BufferedReader bufferedReader;
     private PrintWriter printWriter;
     private Converter converter;
     private static Logger LOGGER = LogManager.getLogger(SocketConnection.class);
 
-    public SocketConnection(Socket socket, Converter converter) {
+    public SocketConnection(Socket socket) {
+        property=ServerProperty.getInstance();
         this.socket = socket;
-        this.converter = converter;
+        this.converter = property.getConverter();
         try {
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));;
             this.printWriter = new PrintWriter(new BufferedWriter(

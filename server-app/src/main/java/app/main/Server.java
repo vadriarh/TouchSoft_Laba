@@ -1,9 +1,7 @@
 package app.main;
 
-import app.interfaces.Converter;
-import app.entities.JsonConverter;
-import app.storage.SocketStorage;
 import app.utils.MessageUtils;
+import app.utils.ServerProperty;
 import app.utils.ThreadUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,18 +11,18 @@ import java.net.ServerSocket;
 
 
 public class Server {
-    private boolean isExit;
     private static Logger LOGGER = LogManager.getLogger(Server.class);
-    private ServerSocket serverSocket;
+
+    private boolean isExit;
+    private ServerProperty property;
     private boolean isInit;
     private boolean isAlive;
-    private final int DEFAULT_SERVER_PORT = 40404;
     private int serverPort;
-    public static final Converter CONVERTER=new JsonConverter();
 
     private void init(String command) {
+        property=ServerProperty.getInstance();
         if (!isAlive) {
-            serverPort = DEFAULT_SERVER_PORT;
+            serverPort = property.getServerPort();
             if (!command.equals("/init")) {
                 if (command.startsWith("/init port:")) {
                     command = command.replaceFirst("/init port:", "");
@@ -48,14 +46,13 @@ public class Server {
     private void startServer() {
         if (!isAlive) {
             if (isInit) {
-                SocketStorage.init();
-                LOGGER.debug("Server is run.");
                 try {
-                    serverSocket = new ServerSocket(serverPort);
+                    property.initServerSocket(serverPort);
+                    ThreadUtils.startThreads();
+                    LOGGER.debug("Server is run.");
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
+                    LOGGER.error(e.getMessage());
                 }
-                ThreadUtils.startThreadServer(this);
                 isAlive = true;
             } else {
                 LOGGER.error("Error. Server not initialized");
@@ -67,27 +64,25 @@ public class Server {
     }
 
     private void stopServer() {
+        ServerSocket serverSocket=property.getServerSocket();
         if (isAlive) {
             isAlive = false;
-            ThreadUtils.stopThreadOfServer();
-            ThreadUtils.stopThreadOfInnerReports();
-            ThreadUtils.stopThreadOfCreateChats();
-            SocketStorage.close();
+            ThreadUtils.stopThreads();
             try {
                 serverSocket.close();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
             }
-            serverSocket = null;
+            property.getStorage().close(); //erase storage
             LOGGER.debug("Server stoped.");
         } else {
-            System.out.println("Server not started");
+            LOGGER.debug("Server not started");
         }
     }
 
     private void exit() {
         if (isAlive) {
-            System.out.println("Server is run. Press \"yes\" to stop server ond exit. " +
+            LOGGER.info("Server is run. Press \"yes\" to stop server ond exit. " +
                     "Press another to cancel.");
             if (MessageUtils.getConsoleMessage().equalsIgnoreCase("yes")) {
                 stopServer();
@@ -95,7 +90,7 @@ public class Server {
                 return;
             }
         }
-        System.out.println("Server APP exit. Goodbye.");
+        LOGGER.info("Server APP exit. Goodbye.");
         isExit = true;
     }
 
@@ -136,17 +131,6 @@ public class Server {
             wrongCommand();
         }
     }
-
-
-
-    public ServerSocket getServerSocket() {
-        return serverSocket;
-    }
-
-    public boolean isAlive() {
-        return isAlive;
-    }
-
 
     private void wrongCommand() {
         System.out.println("Incorrect command");

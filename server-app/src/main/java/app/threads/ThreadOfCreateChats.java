@@ -3,6 +3,7 @@ package app.threads;
 import app.entities.Message;
 import app.entities.User;
 import app.storage.SocketStorage;
+import app.utils.ServerProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,16 +13,18 @@ import static app.utils.MessageConstant.TO_CONNECT;
 
 public class ThreadOfCreateChats implements Runnable {
     private static Logger LOGGER = LogManager.getLogger(ThreadOfCreateChats.class);
+    private SocketStorage storage;
 
     @Override
     public void run() {
+        storage= ServerProperty.getInstance().getStorage();
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (SocketStorage.getCountAgents() != 0 && SocketStorage.getCountClients() != 0) {
+            if (storage.getCountAgents() != 0 && storage.getCountClients() != 0) {
                 getChatUsers();
             }
         }
@@ -29,8 +32,8 @@ public class ThreadOfCreateChats implements Runnable {
     }
 
     private synchronized void getChatUsers() {
-        if(SocketStorage.getActualMapOfUsers()!=null){
-            Map<String, User> mapUsers = SocketStorage.getActualMapOfUsers();
+        if(storage.getActualMapOfUsers()!=null){
+            Map<String, User> mapUsers = storage.getActualMapOfUsers();
             User client = null;
             String clientNameKey=null;
             User agent = null;
@@ -51,8 +54,8 @@ public class ThreadOfCreateChats implements Runnable {
                     agentNameKey=nameKey;
                 }
             }
-            SocketStorage.editCountAgents(-1);
-            SocketStorage.editCountClients(-1);
+            storage.editCountAgents(-1);
+            storage.editCountClients(-1);
             agent.setRecipient(clientNameKey);
             client.setRecipient(agentNameKey);
             Message message = new Message(String.format(TO_CONNECT,agent.getName()));

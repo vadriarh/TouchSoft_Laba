@@ -30,4 +30,11 @@ public class MessageUtils {
         }
     }
 
+    public static String createKeyOfTypeAndName(User user){
+        String userName=user.getName();
+        String userType=user.getUserType();
+        String key=userType+"#"+userName;
+        return key;
+    }
+
 }

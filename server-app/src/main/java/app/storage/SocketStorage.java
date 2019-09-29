@@ -4,6 +4,7 @@ import app.entities.Message;
 import app.entities.User;
 import app.interfaces.Connection;
 import app.utils.MessageConstant;
+import app.utils.MessageUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,38 +17,48 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class SocketStorage {
-    private static Set<User> setOfRegistration;
-    private static Map<String,User> mapOfUsers;
-    private static AtomicLong countOfClients;
-    private static AtomicLong countOfAgents;
-    private static boolean isActive;
-
     private static Logger LOGGER = LogManager.getLogger(SocketStorage.class);
 
-    public static void init(){
+    private static SocketStorage instance;
+
+    private Set<User> setOfRegistration;
+    private Map<String,User> mapOfUsers;
+    private AtomicLong countOfClients;
+    private AtomicLong countOfAgents;
+    private boolean isActive;
+
+    private SocketStorage(){
         setOfRegistration = new CopyOnWriteArraySet<>();
         mapOfUsers=new ConcurrentHashMap<>();
         countOfClients=new AtomicLong();
         countOfAgents=new AtomicLong();
-        isActive=true;
     }
 
-    public static boolean isActive() {
+    public static SocketStorage getInstance(){
+        if(instance==null){
+            instance=new SocketStorage();
+        }
+        return instance;
+    }
+
+
+    public boolean isActive() {
         return isActive;
     }
 
-    public static boolean addUser(User user) {
+    public boolean addUser(User user) {
         return setOfRegistration.add(user);
     }
 
-    public static boolean isEmptySetOfRegistration(){
+    public boolean isEmptySetOfRegistration(){
         return setOfRegistration.isEmpty();
     }
 
 
-    public static boolean addToMapOfUsers(User user){
-        String key=user.getUserType()+"#"+user.getName();
+    public boolean addToMapOfUsers(User user){
+        String key= MessageUtils.createKeyOfTypeAndName(user);
         boolean status=false;
+
         if(!mapOfUsers.containsKey(key)&&mapOfUsers!=null){
             mapOfUsers.put(key,user);
             status=true;
@@ -55,20 +66,20 @@ public class SocketStorage {
         return status;
     }
 
-    public static void removeUserFromMap(User user){
-        String key=user.getUserType()+"#"+user.getName();
+    public void removeUserFromMap(User user){
+        String key=MessageUtils.createKeyOfTypeAndName(user);
         if(mapOfUsers!=null)mapOfUsers.remove(key);
     }
 
-    public static void removeUserFromSetRegistration(User user){
+    public void removeUserFromSetRegistration(User user){
         setOfRegistration.remove(user);
     }
 
-    public static Connection getConnection(String key){
+    public Connection getConnection(String key){
         return mapOfUsers.get(key).getConnection();
     }
 
-    public static Map<String,User> getActualMapOfUsers(){
+    public Map<String,User> getActualMapOfUsers(){
         Map<String,User> getMap=null;
         if(mapOfUsers!=null){
            getMap =new HashMap<>(mapOfUsers);
@@ -76,7 +87,7 @@ public class SocketStorage {
         return getMap;
     }
 
-    public static void editCountAgents(int number){
+    public void editCountAgents(int number){
         if(number==1){
             countOfAgents.getAndIncrement();
         }else if(number==-1){
@@ -84,7 +95,7 @@ public class SocketStorage {
         }
     }
 
-    public static void editCountClients(int number){
+    public void editCountClients(int number){
         if(number==1){
             countOfClients.getAndIncrement();
         }else if(number==-1){
@@ -92,18 +103,20 @@ public class SocketStorage {
         }
     }
 
-    public static long getCountAgents(){
+    public long getCountAgents(){
         return countOfAgents.get();
     }
 
-    public static long getCountClients(){
+    public long getCountClients(){
         return countOfClients.get();
     }
 
-    public static void close() {
+    public void close() {
         Message message=new Message();
         message.setText(MessageConstant.SERVER_DOWN);
-        for (User user:mapOfUsers.values()) {
+        setOfRegistration.addAll(mapOfUsers.values());
+        mapOfUsers=new ConcurrentHashMap<>();
+        for (User user:setOfRegistration) {
             user.getConnection().sendMessage(message);
             try {
                 user.getConnection().close();
@@ -111,19 +124,14 @@ public class SocketStorage {
                 LOGGER.error(e.getMessage());
             }
         }
-        closeStorage();
+        setOfRegistration=new CopyOnWriteArraySet<>();
+
     }
-    public static User[] getUsersToRegistration(){
+    public User[] getUsersToRegistration(){
         return setOfRegistration.toArray(new User[0]);
     }
 
-    public static User getUserFromMap(String key){
+    public User getUserFromMap(String key){
         return mapOfUsers.get(key);
-    }
-    private static void closeStorage(){
-        setOfRegistration =null;
-        mapOfUsers=null;
-        countOfClients=null;
-        countOfAgents=null;
     }
 }

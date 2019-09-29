@@ -12,36 +12,48 @@ import java.io.IOException;
 import static app.utils.MessageConstant.*;
 
 public class ExitUtils {
+
     private static Logger LOGGER = LogManager.getLogger(ExitUtils.class);
     public static void exitUser(User user){
-        Connection<Message> userConnection=user.getConnection();
-        if(user.getRecipient()==null){
-            SocketStorage.removeUserFromMap(user);
-                if(user.getName()==null){
-                    LOGGER.info(UNREGISTERED_EXIT_THE_APP);
-                }else{
-                    LOGGER.info(String.format(EXIT_THE_APP,user.getUserType(),user.getName()));
-                }
+        SocketStorage storage=SocketStorage.getInstance();
+        String recipientNameKey=user.getRecipient();
+        String userName=user.getName();
+        String userType=user.getUserType();
+
+        User recipient=storage.getUserFromMap(recipientNameKey);
+        String recipientName=recipient.getName();
+        Connection<Message> recipientConnection=recipient.getConnection();
+        String recipientType=recipient.getUserType();
+
+        String leaveMessage=String.format(USER_LEAVE_CHAT,userType,userName);
+
+        if(recipientNameKey==null){
+            storage.removeUserFromMap(user);
+
+            if(userName==null){
+                LOGGER.info(UNREGISTERED_EXIT_THE_APP);
             }else{
-            User recipient=SocketStorage.getUserFromMap(user.getRecipient());
-            Connection<Message> recipientConnection=recipient.getConnection();
-            String leaveMessage=String.format(USER_LEAVE_CHAT,user.getUserType(),user.getName());
+                LOGGER.info(String.format(EXIT_THE_APP,userType,userName));
+            }
+        }else{
             recipientConnection.sendMessage(new Message(leaveMessage));
             recipient.setRecipient(null);
-            SocketStorage.removeUserFromMap(user);
-            LOGGER.info(String.format(EXIT_THE_APP,user.getUserType(),user.getName()));
+            storage.removeUserFromMap(user);
+
+            LOGGER.info(String.format(EXIT_THE_APP,userType,userName));
             if(recipient.getUserType().equals("client")){
-                SocketStorage.editCountClients(1);
+                storage.editCountClients(1);
             }else{
-                SocketStorage.editCountAgents(1);
+                storage.editCountAgents(1);
             }
+
             try {
                 user.close();
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
             }
             LOGGER.info(String.format("Chat between %s %s and %s %s was closed.",
-                    user.getUserType(),user.getName(),recipient.getUserType(),recipient.getName()));
+                    userType,userName,recipientType,recipientName));
         }
     }
 }
