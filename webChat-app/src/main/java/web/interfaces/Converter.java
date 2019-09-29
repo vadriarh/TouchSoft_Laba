@@ -1,4 +1,4 @@
-package interfaces;
+package web.interfaces;
 
 
 public interface Converter<MessageType,ReportType> {

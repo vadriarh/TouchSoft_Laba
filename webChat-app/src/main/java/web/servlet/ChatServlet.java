@@ -1,9 +1,9 @@
-package servlet;
+package web.servlet;
 
-import interfaces.Connection;
-import storage.MemoryWebUser;
-import threads.ThreadOfSendingMessage;
-import utils.MessageUtils;
+import web.interfaces.Connection;
+import web.storage.MemoryWebUser;
+import web.threads.ThreadOfSendingMessage;
+import web.utils.MessageUtils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;

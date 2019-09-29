@@ -1,8 +1,8 @@
-package model;
+package web.model;
 
 
-import interfaces.Connection;
-import interfaces.Converter;
+import web.interfaces.Connection;
+import web.interfaces.Converter;
 
 import java.io.*;
 import java.net.Socket;
@@ -14,15 +14,11 @@ public class SocketConnection implements Connection<String> {
     private PrintWriter printWriter;
     private Converter converter;
 
-    public SocketConnection(Socket socket) {
+    public SocketConnection(Socket socket) throws IOException {
         this.socket = socket;
-        try {
-            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));;
-            this.printWriter = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(socket.getOutputStream())), true);
-        } catch (IOException e) {
-
-        }
+        this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));;
+        this.printWriter = new PrintWriter(new BufferedWriter(
+                new OutputStreamWriter(socket.getOutputStream())), true);
     }
 
     @Override
@@ -31,15 +27,12 @@ public class SocketConnection implements Connection<String> {
     }
 
     @Override
-    public String getMessage() {
+    public String getMessage() throws IOException {
         String report = null;
-        try {
-            if (bufferedReader.ready()) {
-                report = bufferedReader.readLine();
-            }
-        } catch (IOException e) {
+        if (bufferedReader.ready()) {
+            report = bufferedReader.readLine();
         }
-        return (String) report;
+        return report;
     }
 
     @Override
@@ -64,13 +57,18 @@ public class SocketConnection implements Connection<String> {
         return Objects.hash(socket, bufferedReader, printWriter);
     }
 
+    @Override
+    public String toString() {
+        return "SocketConnection{" +
+                "socket=" + socket +
+                ", bufferedReader=" + bufferedReader +
+                ", printWriter=" + printWriter +
+                ", converter=" + converter +
+                '}';
+    }
 
     @Override
     public void close() throws IOException {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        socket.close();
     }
 }

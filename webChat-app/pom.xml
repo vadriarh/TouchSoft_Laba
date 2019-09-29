@@ -4,6 +4,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <artifactId>Console_Chat</artifactId>
+    <groupId>TouchSoft_Laba</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
   <groupId>TouchSoft_Laba</groupId>
   <artifactId>webChat-app</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -31,22 +37,10 @@
       <version>4.0.1</version>
     </dependency>
     <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
-      <version>1.2</version>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet.jsp</groupId>
       <artifactId>javax.servlet.jsp-api</artifactId>
       <version>2.3.3</version>
     </dependency>
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.8.5</version>
-      <scope>compile</scope>
-    </dependency>
-
   </dependencies>
 
   <build>

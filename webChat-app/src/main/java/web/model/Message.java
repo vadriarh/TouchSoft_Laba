@@ -1,4 +1,4 @@
-package model;
+package web.model;
 
 public class Message {
     private String text;

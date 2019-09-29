@@ -1,4 +1,4 @@
-package utils;
+package web.utils;
 
 public class WebProperty {
     private static WebProperty instance;

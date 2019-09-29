@@ -1,8 +1,8 @@
-package utils;
+package web.utils;
 
-import interfaces.Converter;
-import model.JsonConverter;
-import model.Message;
+import web.interfaces.Converter;
+import web.model.JsonConverter;
+import web.model.Message;
 
 public class MessageUtils {
     private static Converter converter;

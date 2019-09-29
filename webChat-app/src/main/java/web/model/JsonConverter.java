@@ -1,6 +1,6 @@
-package model;
+package web.model;
 
-import interfaces.Converter;
+import web.interfaces.Converter;
 import com.google.gson.Gson;
 
 public class JsonConverter implements Converter<Message,String> {

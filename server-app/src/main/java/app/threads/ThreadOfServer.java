@@ -26,7 +26,7 @@ public class ThreadOfServer implements Runnable {
         while (!ThreadUtils.isIsThreadsAlive()){
 
         }
-        LOGGER.debug("All app.threads is run");
+        LOGGER.debug("All threads is run");
         Socket incomingSocket;
         while (!Thread.currentThread().isInterrupted()) {
             incomingSocket = null;

@@ -1,6 +1,6 @@
-package websocket;
+package web.websocket;
 
-import storage.MemoryWebUser;
+import web.storage.MemoryWebUser;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -25,8 +25,8 @@ public class ChatEndpoint{
     }
 
     @OnError
-    public void onError(Throwable throwable) {
-        System.out.println("onError::" + throwable.getMessage());
+    public void onError(Session session,Throwable throwable) {
+        storage.registerAndLogError(session,throwable);
     }
 
 }
