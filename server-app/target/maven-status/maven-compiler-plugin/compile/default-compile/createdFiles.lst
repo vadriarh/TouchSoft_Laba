@@ -1,6 +1,7 @@
 app\threads\ThreadOfCreateChats.class
 app\threads\ThreadOfInnerReports.class
 app\utils\MessageConstant.class
+app\utils\ServerProperty.class
 app\handler\RegisterUtils.class
 app\interfaces\Connection.class
 app\handler\LeaveUtils.class
