@@ -16,6 +16,11 @@ public class ThreadOfCreateChats implements Runnable {
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (SocketStorage.getCountAgents() != 0 && SocketStorage.getCountClients() != 0) {
                 getChatUsers();
             }

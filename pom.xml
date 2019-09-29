@@ -13,7 +13,7 @@
     <modules>
         <module>client-app</module>
         <module>server-app</module>
-        <module>servlet-war</module>
+        <module>webChat-app</module>
     </modules>
 
     <properties>
@@ -66,7 +66,6 @@
     </build>
 
     <dependencies>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>

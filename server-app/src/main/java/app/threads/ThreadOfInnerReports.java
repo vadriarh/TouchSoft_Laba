@@ -12,7 +12,13 @@ public class ThreadOfInnerReports implements Runnable {
     private static Logger LOGGER = LogManager.getLogger(ThreadOfInnerReports.class);
     @Override
     public void run() {
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             User removeUser=null;
             if(SocketStorage.getUsersToRegistration().length!=0){
                 for (User user:SocketStorage.getUsersToRegistration()) {

@@ -48,7 +48,7 @@ public class SocketStorage {
     public static boolean addToMapOfUsers(User user){
         String key=user.getUserType()+"#"+user.getName();
         boolean status=false;
-        if(!mapOfUsers.containsKey(key)){
+        if(!mapOfUsers.containsKey(key)&&mapOfUsers!=null){
             mapOfUsers.put(key,user);
             status=true;
         }
@@ -57,7 +57,7 @@ public class SocketStorage {
 
     public static void removeUserFromMap(User user){
         String key=user.getUserType()+"#"+user.getName();
-        mapOfUsers.remove(key);
+        if(mapOfUsers!=null)mapOfUsers.remove(key);
     }
 
     public static void removeUserFromSetRegistration(User user){

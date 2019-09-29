@@ -1,0 +1,8 @@
+app\entities\Message.class
+app\entities\SocketConnection.class
+app\main\APPChat.class
+app\interfaces\Converter.class
+app\interfaces\Connection.class
+app\thread\ThreadOfInnerMessages.class
+app\utils\MessageUtils.class
+app\entities\JsonConverter.class

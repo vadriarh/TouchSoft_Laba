@@ -1,7 +1,7 @@
-package entities;
+package model;
 
-import com.google.gson.Gson;
 import interfaces.Converter;
+import com.google.gson.Gson;
 
 public class JsonConverter implements Converter<Message,String> {
     private Gson gson=new Gson();
