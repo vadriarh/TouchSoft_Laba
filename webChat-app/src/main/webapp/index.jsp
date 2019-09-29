@@ -2,6 +2,6 @@
 <!DOCTYPE html>
 <html>
 <body>
-<a href="chat">go</a>
+<a href="chat">Welcome to chat</a>
 </body>
 </html>

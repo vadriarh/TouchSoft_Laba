@@ -7,7 +7,8 @@ public class MessageConstant {
     public static final String WAIT_TO_CONNECTION="Wait to connection.";
     public static final String CHAT_IS_OFF="You haven’t been connected to the chat yet.";
     public static final String USER_LEAVE_CHAT="%s %s left the chat.";
-    public static final String EXIT_THE_APP="%s %s was exit app.";
+    public static final String EXIT_THE_APP="Customer %s %s was exited from app.";
+    public static final String UNREGISTERED_EXIT_THE_APP="Unregistered connection was exited from app.";
     public static final String BEEN_REGISTERED="You have already been registered.";
     public static final String WRONG_TYPE_USER="You are trying to register with an invalid type.";
     public static final String REPEAT_REGISTRATION="Repeat registration.";

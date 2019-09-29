@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ThreadOfSendingMessage implements Runnable{
+    private MemoryWebUser storage=MemoryWebUser.getInstance();
 
     @Override
     public void run() {
@@ -16,23 +17,21 @@ public class ThreadOfSendingMessage implements Runnable{
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
+                Thread.currentThread().interrupt();
             }
-            if(MemoryWebUser.connectionStorage.size()>0){
-                HashMap<Session, Connection<String>> actualMapConnection=MemoryWebUser.getMapConnection();
+            if(storage.storageSize()>0){
+                HashMap<Session, Connection<String>> actualMapConnection=storage.getMapConnection();
                 for (Map.Entry<Session,Connection<String>> entry:actualMapConnection.entrySet()) {
-                    boolean statusConnection=entry.getValue().isActive();
-                    if(statusConnection){
-                        String report=entry.getValue().getMessage();
-                        if(report!=null){
-                            try {
-                                entry.getKey().getBasicRemote().sendText(report);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                    Session currentSession =entry.getKey();
+                    Connection<String> currentConnection=entry.getValue();
+                    String report=currentConnection.getMessage();
+                    if(report!=null){
+                        try {
+                            currentSession.getBasicRemote().sendText(report);
+                        } catch (IOException e) {
+                            System.out.println(e.getMessage());
                         }
-                    }else{
-                        MemoryWebUser.connectionStorage.remove(entry.getKey());
                     }
                 }
             }

@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 @WebServlet(name = "ChatServlet" ,urlPatterns="/chat")
 public class ChatServlet extends HttpServlet {
@@ -28,7 +27,7 @@ private MemoryWebUser userStorage;
         threadOfSendingMessage.setName("Thread of sending message");
         threadOfSendingMessage.setDaemon(true);
         threadOfSendingMessage.start();
-        MemoryWebUser.connectionStorage=new ConcurrentHashMap<>();
+        userStorage=MemoryWebUser.getInstance();
     }
 
     @Override

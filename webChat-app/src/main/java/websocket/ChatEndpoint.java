@@ -1,46 +1,32 @@
 package websocket;
 
-import interfaces.Connection;
-import model.SocketConnection;
 import storage.MemoryWebUser;
-import utils.MessageUtils;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import java.io.IOException;
-import java.net.Socket;
 
 @ServerEndpoint("/chat")
 public class ChatEndpoint{
-    private final String serverHost = "127.0.0.1";
-    private final int serverPort = 40404;
+    private MemoryWebUser storage=MemoryWebUser.getInstance();
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig endpointConfig) {
-        Socket socket = null;
-        try {
-            socket = new Socket(serverHost, serverPort);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Connection<String> connection = new SocketConnection(socket);
-        MemoryWebUser.connectionStorage.put(session, connection);
+        storage.addConnection(session);
     }
 
     @OnMessage
     public void onMessage(Session session,String message){
-        MemoryWebUser.connectionStorage.get(session).sendMessage(message);
+        storage.sendMessageFromSession(session,message);
     }
 
     @OnClose
     public void onClose(Session session){
-        String report= MessageUtils.createCloseReport();
-        MemoryWebUser.connectionStorage.get(session).sendMessage(report);
+        storage.closeCurrentSession(session);
     }
 
     @OnError
-    public void onError(Throwable t) {
-        System.out.println("onError::" + t.getMessage());
+    public void onError(Throwable throwable) {
+        System.out.println("onError::" + throwable.getMessage());
     }
 
 }

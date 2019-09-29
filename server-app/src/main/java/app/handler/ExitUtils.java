@@ -17,8 +17,12 @@ public class ExitUtils {
         Connection<Message> userConnection=user.getConnection();
         if(user.getRecipient()==null){
             SocketStorage.removeUserFromMap(user);
-            LOGGER.info(String.format(EXIT_THE_APP,user.getUserType(),user.getName()));
-        }else{
+                if(user.getName()==null){
+                    LOGGER.info(UNREGISTERED_EXIT_THE_APP);
+                }else{
+                    LOGGER.info(String.format(EXIT_THE_APP,user.getUserType(),user.getName()));
+                }
+            }else{
             User recipient=SocketStorage.getUserFromMap(user.getRecipient());
             Connection<Message> recipientConnection=recipient.getConnection();
             String leaveMessage=String.format(USER_LEAVE_CHAT,user.getUserType(),user.getName());
@@ -38,8 +42,6 @@ public class ExitUtils {
             }
             LOGGER.info(String.format("Chat between %s %s and %s %s was closed.",
                     user.getUserType(),user.getName(),recipient.getUserType(),recipient.getName()));
-            LOGGER.info(String.format("Customer %s %s was exited from app.",
-                    user.getUserType(),user.getName()));
         }
     }
 }

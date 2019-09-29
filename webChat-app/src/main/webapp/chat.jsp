@@ -41,14 +41,7 @@
     Chat.socket = null;
 
     Chat.connect = (function(host) {
-        if ('WebSocket' in window) {
-            Chat.socket = new WebSocket(host);
-        } else if ('MozWebSocket' in window) {
-            Chat.socket = new MozWebSocket(host);
-        } else {
-            Console.log('Error: WebSocket is not supported by this browser.');
-            return;
-        }
+        Chat.socket = new WebSocket(host);
 
         Chat.socket.onopen = function () {
             Console.log('Info: WebSocket connection opened.');
@@ -83,6 +76,11 @@
         if (message != '') {
             Chat.socket.send(JSON.stringify({text:message}));
             document.getElementById('chat').value = '';
+            if(message=='/exit'){
+                Console.log('Connection closed. Goodbye.');
+                Console.log('To reconnect, refresh the page.');
+                document.getElementById('chat').onkeydown = null;
+            }
         }
     });
 
@@ -102,14 +100,13 @@
 
     Chat.initialize();
 
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // Remove elements with "noscript" class - <noscript> is not allowed in XHTML
-        var noscripts = document.getElementsByClassName("noscript");
-        for (var i = 0; i < noscripts.length; i++) {
-            noscripts[i].parentNode.removeChild(noscripts[i]);
-        }
-    }, false);
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Remove elements with "noscript" class - <noscript> is not allowed in XHTML
+    //     var noscripts = document.getElementsByClassName("noscript");
+    //     for (var i = 0; i < noscripts.length; i++) {
+    //         noscripts[i].parentNode.removeChild(noscripts[i]);
+    //     }
+    // }, false);
     </script>
 </head>
 <body>
