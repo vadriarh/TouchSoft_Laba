@@ -63,6 +63,22 @@ public class Server {
 
     }
 
+    //When the server /stop, these exceptions appear:
+
+    //java.lang.InterruptedException: sleep interrupted
+    //server:         at java.base/java.lang.Thread.sleep(Native Method)
+    //        at app.threads.ThreadOfCreateChats.run(ThreadOfCreateChats.java:23)
+    //        at java.base/java.lang.Thread.run(Unknown Source)
+    //Exception in thread "Server thread" java.lang.InterruptedException: sleep interr
+    //upted
+    //        at java.base/java.lang.Thread.sleep(Native Method)
+    //        at app.threads.ThreadOfInnerReports.run(ThreadOfInnerReports.java:21)
+    //        at java.base/java.lang.Thread.run(Unknown Source)
+    //java.lang.NullPointerException
+    //        at app.entities.SocketConnection.<init>(SocketConnection.java:26)
+    //        at app.entities.User.<init>(User.java:19)
+    //        at app.threads.ThreadOfServer.run(ThreadOfServer.java:35)
+    //        at java.base/java.lang.Thread.run(Unknown Source)
     private void stopServer() {
         ServerSocket serverSocket=property.getServerSocket();
         if (isAlive) {
@@ -79,6 +95,21 @@ public class Server {
             LOGGER.debug("Server not started");
         }
     }
+
+    // When the server exit,yes, without "/stop" these exceptions appear:
+    //
+    // java.lang.InterruptedException: sleep interrupted[DEBUG] 2019-09-30 16:09:29.990
+    // [main] Server - Server stoped.
+    //
+    //        at java.base/java.lang.Thread.sleep(Native Method)[INFO ] 2019-09-30 16:
+    //09:29.993 [main] Server - Server APP exit. Goodbye.
+    //
+    //        at app.threads.ThreadOfInnerReports.run(ThreadOfInnerReports.java:21)
+    //        at java.base/java.lang.Thread.run(Unknown Source)
+    //Exception in thread "Server thread" java.lang.NullPointerException
+    //        at app.entities.SocketConnection.<init>(SocketConnection.java:26)
+    //        at app.entities.User.<init>(User.java:19)
+    //        at app.threads.ThreadOfServer.run(ThreadOfServer.java:35)
 
     private void exit() {
         if (isAlive) {

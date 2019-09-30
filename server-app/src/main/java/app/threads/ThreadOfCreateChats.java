@@ -31,6 +31,9 @@ public class ThreadOfCreateChats implements Runnable {
 
     }
 
+    // No check to see if the user is expecting a connection
+    // If the user left the chat with the "/ leave" command,
+    // he should not connect to anyone
     private synchronized void getChatUsers() {
         if(storage.getActualMapOfUsers()!=null){
             Map<String, User> mapUsers = storage.getActualMapOfUsers();

@@ -11,6 +11,8 @@ import static app.utils.MessageConstant.*;
 import static app.utils.MessageConstant.USER_LEAVE_CHAT;
 
 public class LeaveUtils {
+
+    //The utility does not set the user who entered "/ leave" that he should not be connected to anyone.
     private static Logger LOGGER = LogManager.getLogger(LeaveUtils.class);
     public static void leaveUser(User user){
         SocketStorage storage=SocketStorage.getInstance();

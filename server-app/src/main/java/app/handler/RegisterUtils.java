@@ -31,6 +31,8 @@ public class RegisterUtils {
                         userConnection.sendMessage(new Message(WAIT_TO_CONNECTION));
                         storage.removeUserFromSetRegistration(user);
 
+                        // maybe more elegantly create a method "SocketStorage.editCount(userType ut, int number)"
+                        // the method "editCount" will determine the user type
                         if(userType.equals("client")){
                             storage.editCountClients(1);
                         }else {

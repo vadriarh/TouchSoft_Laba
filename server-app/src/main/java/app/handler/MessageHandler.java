@@ -29,6 +29,11 @@ public class MessageHandler {
                 userConnection.sendMessage(new Message(NO_REGISTRATION));
                 userConnection.sendMessage(new Message(INVITATION_TO_REGISTER));
             }else if(user.getRecipient()==null){
+
+                //with this approach, user messages are lost.
+                //You must ensure:
+                // "Messages sent by the client in the absence of a connection to the agent must not be lost."
+
                 userConnection.sendMessage(new Message(LACK_OF_INTERLOCUTORS));
                 userConnection.sendMessage(new Message(WAIT_TO_CONNECTION));
             }else {

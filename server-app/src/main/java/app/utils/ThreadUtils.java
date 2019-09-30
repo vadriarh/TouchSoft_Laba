@@ -9,7 +9,7 @@ public class ThreadUtils {
     private static Thread threadOfCreateChats;
     private static Thread threadOfInnerReports;
 
-
+    // the call location does not use a return boolean
     private static boolean startThreadServer(){
         if(threadOfServer==null){
             threadOfServer = new Thread(new ThreadOfServer());
@@ -22,6 +22,7 @@ public class ThreadUtils {
         return false;
     }
 
+    // the call location does not use a return boolean
     private static boolean stopThreadOfServer(){
         if(threadOfServer.isAlive()){
             threadOfServer.interrupt();
@@ -32,6 +33,7 @@ public class ThreadUtils {
         return false;
     }
 
+    // the call location does not use a return boolean
     private static boolean startThreadOfCreateChats(){
         if(threadOfCreateChats ==null){
             threadOfCreateChats = new Thread(new ThreadOfCreateChats());
@@ -44,6 +46,7 @@ public class ThreadUtils {
         return false;
     }
 
+    // the call location does not use a return boolean
     private static boolean stopThreadOfCreateChats(){
         if(threadOfCreateChats.isAlive()){
             threadOfCreateChats.interrupt();
@@ -54,6 +57,7 @@ public class ThreadUtils {
         return false;
     }
 
+    // the call location does not use a return boolean
     private static boolean startThreadOfInnerReports(){
         if(threadOfInnerReports==null){
             threadOfInnerReports = new Thread(new ThreadOfInnerReports());

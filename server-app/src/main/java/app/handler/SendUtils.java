@@ -19,6 +19,8 @@ public class SendUtils {
 
         Message sendMessage=new Message(answerServer);
 
+        //  maybe it’s not necessary to send the user his own message.
+        // With this approach, his messages are duplicated in his console
         userConnection.sendMessage(sendMessage);
         recipientConnection.sendMessage(sendMessage);
     }

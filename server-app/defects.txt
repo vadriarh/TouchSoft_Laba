@@ -1,0 +1,1 @@
+1. The server after starting and connecting 2 clients loads the processor 100%.
