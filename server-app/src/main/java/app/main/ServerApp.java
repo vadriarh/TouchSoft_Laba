@@ -1,17 +1,19 @@
 package app.main;
+import app.handlers.CommandHandler;
 import app.utils.MessageUtils;
+import app.utils.ServerStatus;
 
 
 public class ServerApp {
 
     public static void main(String[] args) {
         System.out.println("Server Console Chat v1.0");
-        Server server = new Server();
+        CommandHandler handler=new CommandHandler();
         String command;
-        while (!server.isExit()) {
-            System.out.print("server: ");
+        while (!ServerStatus.isExit()) {
+            System.out.print("COMMAND: ");
             command = MessageUtils.getConsoleMessage();
-            server.service(command);
+            handler.service(command);
         }
     }
 }

@@ -1,90 +1,93 @@
 package app.utils;
 
-import app.threads.ThreadOfCreateChats;
-import app.threads.ThreadOfInnerReports;
-import app.threads.ThreadOfServer;
+import app.threads.ThreadOfGettingNetworkConnections;
+import app.threads.ThreadOfGettingNetworkMessages;
+import app.threads.ThreadOfHandleIncomingMessages;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ThreadUtils {
-    private static Thread threadOfServer;
-    private static Thread threadOfCreateChats;
-    private static Thread threadOfInnerReports;
+    private static Logger LOGGER = LogManager.getLogger(ThreadUtils.class);
+    private static Thread threadOfGettingNetworkConnections;
+    private static Thread threadOfHandleIncomingMessages;
+    private static Thread threadOfGettingNetworkMessages;
 
 
-    private static boolean startThreadServer(){
-        if(threadOfServer==null){
-            threadOfServer = new Thread(new ThreadOfServer());
-            threadOfServer.setDaemon(true);
-            threadOfServer.setName("Server thread");
-            threadOfServer.start();
+    private static boolean startThreadOfGettingNetworkConnections() {
+        if (threadOfGettingNetworkConnections == null) {
+            threadOfGettingNetworkConnections = new Thread(new ThreadOfGettingNetworkConnections());
+            threadOfGettingNetworkConnections.setDaemon(true);
+            threadOfGettingNetworkConnections.setName("ThreadOfGettingNetworkConnections");
+            threadOfGettingNetworkConnections.start();
             return true;
         }
-        System.out.println("Server thread been started.");
+        LOGGER.debug("ThreadOfGettingNetworkConnections been started.");
         return false;
     }
 
-    private static boolean stopThreadOfServer(){
-        if(threadOfServer.isAlive()){
-            threadOfServer.interrupt();
-            threadOfServer=null;
+    private static boolean stopThreadOfGettingNetworkConnections() {
+        if (threadOfGettingNetworkConnections.isAlive()) {
+            threadOfGettingNetworkConnections.interrupt();
+            threadOfGettingNetworkConnections = null;
             return true;
         }
-        System.out.println("Server thread not started.");
+        LOGGER.debug("ThreadOfGettingNetworkConnections not started.");
         return false;
     }
 
-    private static boolean startThreadOfCreateChats(){
-        if(threadOfCreateChats ==null){
-            threadOfCreateChats = new Thread(new ThreadOfCreateChats());
-            threadOfCreateChats.setDaemon(true);
-            threadOfCreateChats.setName("Registration thread");
-            threadOfCreateChats.start();
+    private static boolean startThreadOfHandleIncomingMessages() {
+        if (threadOfHandleIncomingMessages == null) {
+            threadOfHandleIncomingMessages = new Thread(new ThreadOfHandleIncomingMessages());
+            threadOfHandleIncomingMessages.setDaemon(true);
+            threadOfHandleIncomingMessages.setName("ThreadOfHandleIncomingMessages");
+            threadOfHandleIncomingMessages.start();
             return true;
         }
-        System.out.println("Error to start registration thread");
+        LOGGER.debug("Error to start ThreadOfHandleIncomingMessages");
         return false;
     }
 
-    private static boolean stopThreadOfCreateChats(){
-        if(threadOfCreateChats.isAlive()){
-            threadOfCreateChats.interrupt();
-            threadOfCreateChats =null;
+    private static boolean stopThreadOfHandleIncomingMessages() {
+        if (threadOfHandleIncomingMessages.isAlive()) {
+            threadOfHandleIncomingMessages.interrupt();
+            threadOfHandleIncomingMessages = null;
             return true;
         }
-        System.out.println("Registration process not run");
+        LOGGER.debug("ThreadOfHandleIncomingMessages not run");
         return false;
     }
 
-    private static boolean startThreadOfInnerReports(){
-        if(threadOfInnerReports==null){
-            threadOfInnerReports = new Thread(new ThreadOfInnerReports());
-            threadOfInnerReports.setDaemon(true);
-            threadOfInnerReports.setName("InnerReports thread");
-            threadOfInnerReports.start();
+    private static boolean startThreadOfGettingNetworkMessages() {
+        if (threadOfGettingNetworkMessages == null) {
+            threadOfGettingNetworkMessages = new Thread(new ThreadOfGettingNetworkMessages());
+            threadOfGettingNetworkMessages.setDaemon(true);
+            threadOfGettingNetworkMessages.setName("ThreadOfGettingNetworkMessages");
+            threadOfGettingNetworkMessages.start();
             return true;
         }
-        System.out.println("InnerReports thread been started");
+        LOGGER.debug("ThreadOfGettingNetworkMessages been started");
         return false;
     }
 
-    private static boolean stopThreadOfInnerReports(){
-        if(threadOfInnerReports.isAlive()){
-            threadOfInnerReports.interrupt();
-            threadOfInnerReports=null;
+    private static boolean stopThreadOfGettingNetworkMessages() {
+        if (threadOfGettingNetworkMessages.isAlive()) {
+            threadOfGettingNetworkMessages.interrupt();
+            threadOfGettingNetworkMessages = null;
             return true;
         }
-        System.out.println("Connection process not run");
+        LOGGER.debug("ThreadOfGettingNetworkMessages not run");
         return false;
     }
 
-    public static void startThreads(){
-        ThreadUtils.startThreadServer();
-        ThreadUtils.startThreadOfCreateChats();
-        ThreadUtils.startThreadOfInnerReports();
+    public static boolean startThreads() {
+        return ThreadUtils.startThreadOfGettingNetworkConnections()
+                && ThreadUtils.startThreadOfHandleIncomingMessages()
+                && ThreadUtils.startThreadOfGettingNetworkMessages();
     }
 
-    public static void stopThreads(){
-        ThreadUtils.stopThreadOfServer();
-        ThreadUtils.stopThreadOfInnerReports();
-        ThreadUtils.stopThreadOfCreateChats();
+    public static boolean stopThreads() {
+        return ThreadUtils.stopThreadOfGettingNetworkConnections()
+                && ThreadUtils.stopThreadOfGettingNetworkMessages()
+                && ThreadUtils.stopThreadOfHandleIncomingMessages();
     }
 }
