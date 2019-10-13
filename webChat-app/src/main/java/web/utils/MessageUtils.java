@@ -1,15 +1,17 @@
 package web.utils;
 
-import web.interfaces.Converter;
-import web.model.JsonConverter;
-import web.model.Message;
+import web.messages.InternalMessage;
+import web.messages.SendMessage;
+import web.messages.ServiceMessage;
 
 public class MessageUtils {
-    private static Converter converter;
-    public static String createCloseReport(){
-        Message closeSessionMessage=new Message("/exit");
-        converter=new JsonConverter();
-        String report= (String) converter.convertToReport(closeSessionMessage);
-        return report;
+
+
+    public static InternalMessage parseAndCreateContext(String message) {
+        if(message.startsWith("/")){
+            return new ServiceMessage(message);
+        }else{
+            return new SendMessage(message);
+        }
     }
 }

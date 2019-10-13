@@ -58,8 +58,7 @@
         };
 
         Chat.socket.onmessage = function (message) {
-            var messageObj=JSON.parse(message.data);
-            Console.log(messageObj.text);
+            Console.log(message.data);
         };
     });
 
@@ -74,7 +73,7 @@
     Chat.sendMessage = (function() {
         var message = document.getElementById('chat').value;
         if (message != '') {
-            Chat.socket.send(JSON.stringify({text:message}));
+            Chat.socket.send(message);
             document.getElementById('chat').value = '';
             if(message=='/exit'){
                 Console.log('Connection closed. Goodbye.');

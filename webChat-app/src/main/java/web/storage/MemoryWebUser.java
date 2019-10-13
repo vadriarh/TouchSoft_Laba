@@ -2,8 +2,10 @@ package web.storage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import web.interfaces.Connection;
-import web.model.SocketConnection;
+import web.connections.Connection;
+import web.connections.SocketConnection;
+import web.messages.InternalMessage;
+import web.messages.ServiceMessage;
 import web.utils.MessageUtils;
 import web.utils.WebProperty;
 
@@ -15,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryWebUser {
     private static Logger LOGGER = LogManager.getLogger(MemoryWebUser.class);
-    private ConcurrentHashMap<Session, Connection<String>> connectionStorage;
+    private ConcurrentHashMap<Session, Connection<InternalMessage>> connectionStorage;
     private static MemoryWebUser instance;
     private WebProperty property;
 
@@ -25,14 +27,14 @@ public class MemoryWebUser {
         LOGGER.debug("Storage MemoryWebUser initialized");
     }
 
-    public HashMap<Session,Connection<String>> getMapConnection(){
+    public HashMap<Session, Connection<InternalMessage>> getMapConnection(){
         return new HashMap<>(connectionStorage);
     }
 
     public void addConnection(Session session){
         String serverHost = property.getServerHost();
         int serverPort = property.getServerPort();
-        Connection<String> connection=null;
+        Connection<InternalMessage> connection=null;
         try {
             Socket socket = new Socket(serverHost, serverPort);
             connection = new SocketConnection(socket);
@@ -50,13 +52,20 @@ public class MemoryWebUser {
 
 
     public void sendMessageFromSession(Session session,String message){
-        connectionStorage.get(session).sendMessage(message);
+        InternalMessage context= MessageUtils.parseAndCreateContext(message);
+        connectionStorage.get(session).sendContext(context);
     }
 
     public void closeCurrentSession(Session session){
-        String report= MessageUtils.createCloseReport();
-        connectionStorage.get(session).sendMessage(report);
+        Connection<InternalMessage> sessionConnection=connectionStorage.get(session);
+        sessionConnection.sendContext(new ServiceMessage("/exit"));
+        try {
+            sessionConnection.close();
+        } catch (IOException e) {
+            LOGGER.error("Error to close connection: "+ session);
+        }
         connectionStorage.remove(session);
+
         LOGGER.info("Close connection to session "+session);
     }
 

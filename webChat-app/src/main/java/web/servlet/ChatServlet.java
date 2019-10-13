@@ -1,9 +1,9 @@
 package web.servlet;
 
-import web.interfaces.Connection;
+import web.connections.Connection;
+import web.messages.InternalMessage;
 import web.storage.MemoryWebUser;
 import web.threads.ThreadOfSendingMessage;
-import web.utils.MessageUtils;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -16,40 +16,34 @@ import javax.websocket.Session;
 import java.io.IOException;
 import java.util.HashMap;
 
-@WebServlet(name = "ChatServlet" ,urlPatterns="/chat")
+@WebServlet(name = "ChatServlet", urlPatterns = "/chat")
 public class ChatServlet extends HttpServlet {
-private Thread threadOfSendingMessage;
-private MemoryWebUser userStorage;
+    private MemoryWebUser userStorage;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        threadOfSendingMessage=new Thread(new ThreadOfSendingMessage());
+        Thread threadOfSendingMessage = new Thread(new ThreadOfSendingMessage());
         threadOfSendingMessage.setName("Thread of sending message");
-        threadOfSendingMessage.setDaemon(true);
         threadOfSendingMessage.start();
-        userStorage=MemoryWebUser.getInstance();
+        userStorage = MemoryWebUser.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String protocol="ws";
-        String hostName="localhost";
-        String port="8080";
-        String endpoint="/webChat_app_war_exploded/chat";
-
-    String webSocketAddress=String.format("%s://%s:%s%s",protocol,hostName,port,endpoint);
-    req.setAttribute("webSocketAddress",webSocketAddress);
-    RequestDispatcher requestDispatcher=req.getRequestDispatcher("/chat.jsp");
-    requestDispatcher.forward(req,resp);
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("/chat.jsp");
+        requestDispatcher.forward(req, resp);
     }
 
     @Override
     public void destroy() {
-        threadOfSendingMessage.interrupt();
-        HashMap<Session, Connection<String>> actualMapConnection=userStorage.getMapConnection();
-        String closeReport= MessageUtils.createCloseReport();
-        for (Connection<String> connection:actualMapConnection.values()) {
-            connection.sendMessage(closeReport);
+        HashMap<Session, Connection<InternalMessage>> actualMapConnection = userStorage.getMapConnection();
+        for (Session userSession : actualMapConnection.keySet()) {
+            try {
+                userSession.getBasicRemote().sendText("Server disabled");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            userStorage.closeCurrentSession(userSession);
         }
     }
 }
